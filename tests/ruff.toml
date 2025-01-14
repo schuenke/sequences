@@ -1,0 +1,5 @@
+extend = "../pyproject.toml"
+
+lint.extend-select = []
+
+lint.extend-ignore = []
