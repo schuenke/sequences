@@ -30,7 +30,7 @@ jobs:
 
       - name: Run PyTest and Generate Coverage Report
         run: |
-          pytest -n 4 -m --junitxml=pytest.xml \
+          pytest -n 4 --junitxml=pytest.xml \
           --cov-report=term-missing:skip-covered --cov=sequences | tee pytest-coverage.txt
 
       - name: Verify PyTest XML Output
