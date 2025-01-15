@@ -54,7 +54,7 @@ def test_add_t2prep_raise_error_no_rf_dead_time(system_defaults):
         add_t2prep(system=system_defaults)
 
 
-@pytest.mark.parametrize(('echo_time', 'duration_180'), [(0.01, 1e-3), (0.01, 2e-3), (0.04, 4e-3)])
+@pytest.mark.parametrize(('echo_time', 'duration_180'), [(0.01, 1e-3), (0.011, 1e-3), (0.015, 1e-3), (0.04, 4e-3)])
 def test_add_t2prep_fail_on_short_echo_time(system_defaults, echo_time, duration_180):
     """Test if function raises an error when desired echo time is too short for given pulse duration."""
     seq = pp.Sequence(system=system_defaults)
