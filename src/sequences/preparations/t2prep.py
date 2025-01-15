@@ -1,4 +1,4 @@
-"""Non-adiabatic composite T2prep block."""
+"""MLEV-4 type T2 preparation block."""
 
 from copy import deepcopy
 
@@ -21,7 +21,7 @@ def _add_composite_refocusing_block(
     system
         PyPulseq system limit object. Must have rf_dead_time attribute != None.
     duration_180
-        Duration of 180° refocussing block puls (in seconds). The 90° pulses have half this duration.
+        Duration of 180° refocussing block pulse (in seconds). The 90° pulses have half this duration.
     negative_amp
         Toggles negative amplitude for 180°y pulse. By default, positive amplitudes are used.
 
@@ -38,7 +38,7 @@ def _add_composite_refocusing_block(
     Raises
     ------
     ValueError
-        If rf_dead_time is not provided in system limits.
+        If rf_dead_time is not set in system limits.
     """
     # ensure rf_dead_time is not None
     if system.rf_dead_time is None:
@@ -87,7 +87,10 @@ def add_t2prep(
     spoiler_ramp_time: float = 6e-4,
     spoiler_flat_time: float = 6e-3,
 ) -> tuple[pp.Sequence, float]:
-    """Add a composite T2 preparation block to a sequence.
+    """Add a MLEV-4 type T2 preparation block to a sequence.
+
+    The MLEV-4 T2 prep block consists of a (90x, 180y, 180y, -180y, -180y, 270x, -360x) pulse pattern [Levett81]_.
+    All 180°y pulses are realized using (90x, 180y, 90x) composite pulses. [Brittain95]_.
 
     The 'use' attribute of all RF pulses is set to "preparation" to ignore the pulses in the PyPulseq TE calculations.
 
@@ -100,20 +103,20 @@ def add_t2prep(
         The echo time defined as the time between the center of the excitation pulse and the center of tip-up pulse.
         Therefore, the total duration of the T2 prep block will be longer than the echo time.
     duration_180
-        Duration of a 180° refocusing pulse (in seconds).
+        Duration of 180° refocussing pulse (in seconds).
         The duration of other pulses is scaled linearly based on their flip angles.
         For example:
             A 90° pulse will have half the duration of a 180° pulse.
             A 360° pulse will have twice the duration of a 180° pulse.
     add_spoiler
         Toggles addition of spoiler gradients at the end of the block.
-        The spoiler does not effect the echo time, but increases the total duration of the t2 prep block.
+        The spoiler does not effect the echo time, but increases the total duration of the T2 prep block.
     spoiler_ramp_time
-        Duration of gradient spoiler ramps.
+        Duration of gradient spoiler ramps (in seconds)
     spoiler_flat_time
-        Duration of gradient spoiler plateau.
+        Duration of gradient spoiler plateau (in seconds).
     system
-        system limits
+        PyPulseq system limit object. Must have rf_dead_time attribute != None.
 
     Returns
     -------
@@ -125,8 +128,16 @@ def add_t2prep(
     Raises
     ------
     ValueError
-        If system limits are provided, but not rf_dead_time attribute is set.
+        If system limits are provided, but rf_dead_time attribute is not set.
         If desired echo_time is too short to create the T2 preparation block.
+
+    References
+    ----------
+    .. [Levett81] Levitt, M. H., & Freeman, R. (1981). NMR population inversion using a composite pulse.
+       Journal of Magnetic Resonance, 43(1), 65-80.
+
+    .. [Brittain95] Brittain, J. H., Hu, B. S., Wright, G. A., Meyer, C. H., Macovski, A., & Nishimura, D. G. (1995).
+       Coronary angiography with magnetization-prepared T2 contrast. Magnetic Resonance in Medicine, 33(5), 689-696.
     """
     # set system to default if not provided
     if system is None:
