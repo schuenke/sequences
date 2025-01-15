@@ -6,7 +6,7 @@ import numpy as np
 import pypulseq as pp
 
 
-def _add_composite_refocusing_block(
+def add_composite_refocusing_block(
     seq: pp.Sequence,
     system: pp.Opts,
     duration_180: float,
@@ -43,6 +43,10 @@ def _add_composite_refocusing_block(
     # ensure rf_dead_time is not None
     if system.rf_dead_time is None:
         raise ValueError('rf_dead_time must be provided in system limits.')
+
+    # set rf_ringdown_time to 0 within this preparation block, since no ADC events are used
+    system = deepcopy(system)
+    system.rf_ringdown_time = 0
 
     # define flip angles and durations of RF pulses
     flip_angles = [90, 180, 90]
@@ -178,13 +182,13 @@ def add_t2prep(
     )
 
     if tau1 < 0:
-        raise ValueError(f'Desired echo_time ({echo_time * 1000:.2f} ms) is too short to create the T2 prep block.')
+        raise ValueError(f'Desired echo time ({echo_time * 1000:.2f} ms) is too short to create the T2 prep block.')
 
     # add delay tau1 to sequence
     seq.add_block(pp.make_delay(tau1))
 
     # add first MLEV-4 refocusing pulse
-    seq, refoc_dur, time_to_midpoint = _add_composite_refocusing_block(
+    seq, refoc_dur, time_to_midpoint = add_composite_refocusing_block(
         system=system,
         duration_180=duration_180,
         seq=seq,
@@ -199,13 +203,13 @@ def add_t2prep(
     )
 
     if tau2 < 0:
-        raise ValueError(f'Desired echo_time ({echo_time * 1000:.2f} ms) is too short to create the T2 prep block.')
+        raise ValueError(f'Desired echo time ({echo_time * 1000:.2f} ms) is too short to create the T2 prep block.')
 
     # add delay tau2 to sequence
     seq.add_block(pp.make_delay(tau2))
 
     # add second MLEV-4 refocusing pulse
-    seq, _, _ = _add_composite_refocusing_block(
+    seq, _, _ = add_composite_refocusing_block(
         system=system,
         duration_180=duration_180,
         seq=seq,
@@ -216,7 +220,7 @@ def add_t2prep(
     seq.add_block(pp.make_delay(tau2))
 
     # add third MLEV-4 refocusing pulse
-    seq, _, _ = _add_composite_refocusing_block(
+    seq, _, _ = add_composite_refocusing_block(
         system=system,
         duration_180=duration_180,
         seq=seq,
@@ -227,7 +231,7 @@ def add_t2prep(
     seq.add_block(pp.make_delay(tau2))
 
     # add fourth MLEV-4 refocusing pulse
-    seq, _, _ = _add_composite_refocusing_block(
+    seq, _, _ = add_composite_refocusing_block(
         system=system,
         duration_180=duration_180,
         seq=seq,
@@ -242,7 +246,7 @@ def add_t2prep(
     )
 
     if tau3 < 0:
-        raise ValueError(f'Desired echo_time ({echo_time * 1000:.2f} ms) is too short to create the T2 prep block.')
+        raise ValueError(f'Desired echo time ({echo_time * 1000:.2f} ms) is too short to create the T2 prep block.')
 
     # add delay tau3 to sequence
     seq.add_block(pp.make_delay(tau3))
