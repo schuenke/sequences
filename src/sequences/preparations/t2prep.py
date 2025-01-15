@@ -194,7 +194,7 @@ def add_t2prep(
     # add delay before 2nd MLEV-4 refocusing pulse
     tau2 = (
         echo_time / 4
-        - (refoc_dur - time_to_midpoint)  # time from midpoint of 180° puls in 1st refocussing block to end of the block
+        - (refoc_dur - time_to_midpoint)  # time from midpoint of 180° pulse in 1st refocussing block to end of block
         - time_to_midpoint  # time from start of 2nd refocusing block to midpoint of 180° pulse
     )
 
