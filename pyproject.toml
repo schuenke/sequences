@@ -29,6 +29,14 @@ classifiers = [
 dependencies = ["numpy>=1.23,<2.0", "matplotlib<4.0", "pypulseq>=1.4.2"]
 
 [project.optional-dependencies]
+test = [
+    "coverage",
+    "codecov",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+]
 sigpy = ["sigpy>=0.1.26"]
 
 
