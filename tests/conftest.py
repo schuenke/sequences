@@ -4,7 +4,7 @@ import pypulseq as pp
 import pytest
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def system_defaults():
     """System defaults for sequence generation."""
     return pp.Opts(

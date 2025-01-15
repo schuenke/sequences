@@ -145,7 +145,15 @@ def add_t2prep(
     """
     # set system to default if not provided
     if system is None:
-        system = pp.Opts(max_grad=30, grad_unit='mT/m', max_slew=100, slew_unit='T/m/s', rf_dead_time=100e-6)
+        system = pp.Opts(
+            max_grad=30,
+            grad_unit='mT/m',
+            max_slew=120,
+            slew_unit='T/m/s',
+            rf_ringdown_time=30e-6,
+            rf_dead_time=100e-6,
+            adc_dead_time=10e-6,
+        )
 
     # ensure rf_dead_time is not None
     if system.rf_dead_time is None:

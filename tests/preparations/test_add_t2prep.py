@@ -10,12 +10,11 @@ from sequences.preparations.t2prep import add_t2prep
 
 def test_add_composite_refocusing_block_raise_error_no_rf_dead_time(system_defaults):
     """Test if a ValueError is raised if rf_dead_time is not set."""
-    system = deepcopy(system_defaults)
-    system.rf_dead_time = None
+    system_defaults.rf_dead_time = None
 
-    seq = pp.Sequence(system=system)
+    seq = pp.Sequence(system=system_defaults)
     with pytest.raises(ValueError, match='rf_dead_time must be provided'):
-        add_composite_refocusing_block(seq=seq, system=system, duration_180=2e-3)
+        add_composite_refocusing_block(seq=seq, system=system_defaults, duration_180=2e-3)
 
 
 @pytest.mark.parametrize(
@@ -24,11 +23,10 @@ def test_add_composite_refocusing_block_raise_error_no_rf_dead_time(system_defau
 )
 def test_add_composite_refocusing_block_duration(system_defaults, duration_180, rf_dead_time):
     """Ensure the default parameters are set correctly."""
-    system = system_defaults
-    system.rf_dead_time = rf_dead_time
-    seq = pp.Sequence(system=system)
+    system_defaults.rf_dead_time = rf_dead_time
+    seq = pp.Sequence(system=system_defaults)
 
-    seq, total_dur, _ = add_composite_refocusing_block(seq=seq, system=system, duration_180=duration_180)
+    seq, total_dur, _ = add_composite_refocusing_block(seq=seq, system=system_defaults, duration_180=duration_180)
 
     assert total_dur == sum(seq.block_durations.values())
     assert total_dur == pytest.approx(2 * duration_180 + 3 * rf_dead_time)
@@ -51,11 +49,9 @@ def test_add_composite_refocusing_block_no_ringdown_dependency(system_defaults, 
 
 def test_add_t2prep_raise_error_no_rf_dead_time(system_defaults):
     """Test if a ValueError is raised if rf_dead_time is not set."""
-    system = deepcopy(system_defaults)
-    system.rf_dead_time = None
-
+    system_defaults.rf_dead_time = None
     with pytest.raises(ValueError, match='rf_dead_time must be provided'):
-        add_t2prep(system=system)
+        add_t2prep(system=system_defaults)
 
 
 @pytest.mark.parametrize(('echo_time', 'duration_180'), [(0.01, 1e-3), (0.01, 2e-3), (0.04, 4e-3)])
@@ -64,6 +60,14 @@ def test_add_t2prep_fail_on_short_echo_time(system_defaults, echo_time, duration
     seq = pp.Sequence(system=system_defaults)
     with pytest.raises(ValueError, match='Desired echo time'):
         add_t2prep(seq=seq, system=system_defaults, echo_time=echo_time, duration_180=duration_180)
+
+
+def test_add_t2prep_system_defaults_if_none(system_defaults):
+    """Test if system defaults are used if no system limits are provided."""
+    _, block_duration1 = add_t2prep(system=system_defaults)
+    _, block_duration2 = add_t2prep(system=None)
+
+    assert block_duration1 == block_duration2
 
 
 @pytest.mark.parametrize(
