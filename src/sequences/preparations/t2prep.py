@@ -5,6 +5,8 @@ from copy import deepcopy
 import numpy as np
 import pypulseq as pp
 
+from sequences.utils import sys_defaults
+
 
 def add_composite_refocusing_block(
     seq: pp.Sequence,
@@ -145,15 +147,7 @@ def add_t2prep(
     """
     # set system to default if not provided
     if system is None:
-        system = pp.Opts(
-            max_grad=30,
-            grad_unit='mT/m',
-            max_slew=120,
-            slew_unit='T/m/s',
-            rf_ringdown_time=30e-6,
-            rf_dead_time=100e-6,
-            adc_dead_time=10e-6,
-        )
+        system = sys_defaults
 
     # ensure rf_dead_time is not None
     if system.rf_dead_time is None:
