@@ -103,11 +103,13 @@ def add_t2prep(
     Parameters
     ----------
     seq
-        PyPulseq Sequence object
+        PyPulseq Sequence object.
+    system
+        PyPulseq system limit object. Must have rf_dead_time attribute != None.
     echo_time
-        Desired echo time of the complete block (in seconds).
-        The echo time defined as the time between the center of the excitation pulse and the center of tip-up pulse.
-        Therefore, the total duration of the T2 prep block will be longer than the echo time.
+        Desired echo time (TE) of the block (in seconds).
+        TE is defined as the time between the center of the excitation pulse and the center of the 270° tip-up pulse.
+        Therefore, the total duration of the T2 prep block is always longer than the echo time.
     duration_180
         Duration of 180° refocussing pulse (in seconds).
         The duration of other pulses is scaled linearly based on their flip angles.
@@ -118,16 +120,14 @@ def add_t2prep(
         Toggles addition of spoiler gradients at the end of the block.
         The spoiler does not effect the echo time, but increases the total duration of the T2 prep block.
     spoiler_ramp_time
-        Duration of gradient spoiler ramps (in seconds)
+        Duration of gradient spoiler ramps (in seconds).
     spoiler_flat_time
         Duration of gradient spoiler plateau (in seconds).
-    system
-        PyPulseq system limit object. Must have rf_dead_time attribute != None.
 
     Returns
     -------
     seq
-        PyPulseq Sequence object
+        PyPulseq Sequence object.
     block_duration
         Duration of the complete T2 preparation block (in seconds).
 
